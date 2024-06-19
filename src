@@ -1,0 +1,717 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class LoginForm {
+    private JFrame frame;
+    private JTextField usernameField;
+    private JTextField nameField;
+    private JTextField phoneNumberField;
+    private JTextField emailField;
+    private JPasswordField passwordField;
+    private JComboBox<String> actionComboBox;
+    private JComboBox<String> userTypeComboBox;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                LoginForm window = new LoginForm();
+                window.frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public LoginForm() {
+        initialize();
+    }
+
+    private void initialize() {
+        frame = new JFrame("Login/Register Form");
+        frame.setBounds(100, 100, 500, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(null);
+
+        actionComboBox = new JComboBox<>(new String[]{"Login", "Register"});
+        actionComboBox.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        actionComboBox.setBounds(50, 20, 100, 30);
+        frame.getContentPane().add(actionComboBox);
+
+        usernameField = new JTextField();
+        usernameField.setBounds(160, 60, 200, 30);
+
+        nameField = new JTextField();
+        nameField.setBounds(160, 100, 200, 30);
+
+        phoneNumberField = new JTextField();
+        phoneNumberField.setBounds(160, 140, 200, 30);
+
+        emailField = new JTextField();
+        emailField.setBounds(160, 180, 200, 30);
+
+        passwordField = new JPasswordField();
+        passwordField.setBounds(160, 220, 200, 30);
+
+        actionComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedAction = (String) actionComboBox.getSelectedItem();
+
+                frame.getContentPane().removeAll();
+
+                JLabel usernameLabel = new JLabel("Username");
+                usernameLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                usernameLabel.setBounds(50, 60, 100, 30);
+
+                JLabel nameLabel = new JLabel("Name");
+                nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                nameLabel.setBounds(50, 100, 100, 30);
+
+                JLabel phoneNumberLabel = new JLabel("Phone Number");
+                phoneNumberLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                phoneNumberLabel.setBounds(50, 140, 120, 30);
+
+                JLabel emailLabel = new JLabel("Email ID");
+                emailLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                emailLabel.setBounds(50, 180, 100, 30);
+
+                JLabel passwordLabel = new JLabel("Password");
+                passwordLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                passwordLabel.setBounds(50, 220, 100, 30);
+
+                frame.getContentPane().add(actionComboBox);
+
+                if (selectedAction.equals("Login")) {
+                    frame.getContentPane().add(usernameLabel);
+                    frame.getContentPane().add(usernameField);
+                    frame.getContentPane().add(passwordLabel);
+                    frame.getContentPane().add(passwordField);
+                } else if (selectedAction.equals("Register")) {
+                    frame.getContentPane().add(usernameLabel);
+                    frame.getContentPane().add(usernameField);
+                    frame.getContentPane().add(nameLabel);
+                    frame.getContentPane().add(nameField);
+                    frame.getContentPane().add(phoneNumberLabel);
+                    frame.getContentPane().add(phoneNumberField);
+                    frame.getContentPane().add(emailLabel);
+                    frame.getContentPane().add(emailField);
+                    frame.getContentPane().add(passwordLabel);
+                    frame.getContentPane().add(passwordField);
+
+                    // Add the user type combo box
+                    userTypeComboBox = new JComboBox<>(new String[]{"Farmer", "Normal User", "Organization"});
+                    userTypeComboBox.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                    userTypeComboBox.setBounds(160, 260, 200, 30);
+                    frame.getContentPane().add(userTypeComboBox);
+                }
+
+                frame.getContentPane().add(createActionButton(selectedAction, 270, 300));
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+
+        frame.revalidate();
+        frame.repaint();
+        frame.setVisible(true);
+    }
+
+    private JButton createActionButton(String text, int x, int y) {
+        JButton actionButton = new JButton(text);
+        actionButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        actionButton.setBounds(x, y, 100, 30);
+
+        actionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedAction = (String) actionComboBox.getSelectedItem();
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+                
+
+                if (selectedAction.equals("Login")) 
+                {
+
+
+                    //if(username.equals("pr_x_nxv") && password.equals("pranav12345"))//Normal user
+//-----------------------------------------------------------------------------------------------------------------------------------------
+                        try {
+                                String url = "jdbc:mysql://localhost:3306/news";
+                                String db_username = "root";
+                                String db_password = "9943";
+                                Connection connection = DriverManager.getConnection(url, db_username, db_password);
+                                java.sql.Statement stmt = connection.createStatement();
+                                ResultSet rs = stmt.executeQuery("select * from userinformation");
+                                int flag=0;
+                                while(rs.next())
+                                {
+                                    if (rs.getString(2).equals(username) && rs.getString(3).equals(password))
+                                    {
+                                        flag=1;
+                                        String x=rs.getString(7);
+                                        if(x.equals("Normal User"))
+                                        {
+                                            // JFrame frame1=new JFrame("Normal user");
+                                            // frame1.setBounds(200, 200, 300, 150);
+                                            // JLabel label=new JLabel("Available products are !!! ");
+                                            // label.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                            // label.setHorizontalAlignment(SwingConstants.CENTER);
+                                            // frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                            // frame1.add(label);
+                                            // frame1.setVisible(true);
+                                            JFrame frame1 = new JFrame("Normal user");
+                                        frame1.setBounds(200, 200, 500, 300);
+
+                                        // Fetch data from the database and populate it into a DefaultTableModel
+                                        DefaultTableModel tableModel = new DefaultTableModel();
+                                        tableModel.addColumn("Name");
+                                        tableModel.addColumn("Phone Number");
+                                        tableModel.addColumn("Product");
+                                        tableModel.addColumn("Quantity");
+                                        tableModel.addColumn("Price");
+                                        
+                                        
+
+                                        try {
+                                            String urln = "jdbc:mysql://localhost:3306/news";
+                                            String db_usernamen = "root";
+                                            String db_passwordn = "9943";
+                                            Connection connectionn = DriverManager.getConnection(urln, db_usernamen, db_passwordn);
+                                            java.sql.Statement stmtn = connectionn.createStatement();
+                                            ResultSet rsn = stmtn.executeQuery("select * from product"); // Replace 'your_table_name' with the actual table name
+
+                                            while (rsn.next()) {
+                                                // Assuming the column indices, modify them based on your actual schema
+                                                String name = rsn.getString(2);
+                                                String phoneNumber = rsn.getString(3);
+                                                String product = rsn.getString(4);
+                                                String quantity = rsn.getString(5);
+                                                String price = rsn.getString(6);
+                                                
+                                                
+
+                                                tableModel.addRow(new Object[]{name, phoneNumber, product, quantity, price});
+                                                
+                                                
+                                            }
+
+                                            connection.close();
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+
+                                        JTable table = new JTable(tableModel);
+                                        table.setFont(new Font("Tahoma", Font.PLAIN, 16));
+                                        JScrollPane scrollPane = new JScrollPane(table);
+                                        frame1.getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+                                        frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                        frame1.setVisible(true);
+
+
+                                        }
+                                        else if(x.equals("Farmer"))
+                                        {
+                                            JFrame frame2=new JFrame("Farmer");
+                                            JPanel panel2=new JPanel();
+                                            frame2.setBounds(200, 200, 300, 150);
+                                            JButton purchase =new JButton("Add product ");
+                                            JLabel label2=new JLabel("Add product");
+                                            label2.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                            label2.setHorizontalAlignment(SwingConstants.CENTER);
+                                            frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                            frame2.add(label2);
+                                            panel2.add(purchase);
+                                            frame2.add(panel2);
+                                            frame2.setVisible(true);
+                                            purchase.addActionListener(new ActionListener() {
+                                            public void actionPerformed(ActionEvent e) {
+                                                JFrame purchaseFrame = new JFrame("Add product");
+                                                purchaseFrame.setBounds(200, 200, 400, 300);
+
+                                                JLabel fNameLabel = new JLabel("Full Name:");
+                                                fNameLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                                fNameLabel.setBounds(50, 30, 100, 30);
+
+                                                JTextField fNameField = new JTextField();
+                                                fNameField.setBounds(160, 30, 200, 30);
+
+                                                JLabel phoneLabel = new JLabel("Phone:");
+                                                phoneLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                                phoneLabel.setBounds(50, 70, 100, 30);
+
+                                                JTextField phoneField = new JTextField();
+                                                phoneField.setBounds(160, 70, 200, 30);
+
+                                                JLabel productLabel = new JLabel("Product:");
+                                                productLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                                productLabel.setBounds(50, 110, 100, 30);
+
+                                                JTextField productField = new JTextField();
+                                                productField.setBounds(160, 110, 200, 30);
+
+                                                JLabel quantityLabel = new JLabel("Quantity:");
+                                                quantityLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                                quantityLabel.setBounds(50, 150, 100, 30);
+
+                                                JTextField quantityField = new JTextField();
+                                                quantityField.setBounds(160, 150, 200, 30);
+
+                                                JLabel priceLabel = new JLabel("Price:");
+                                                priceLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                                priceLabel.setBounds(50, 190, 100, 30);
+
+                                                JTextField priceField = new JTextField();
+                                                priceField.setBounds(160, 190, 200, 30);
+
+                                                JButton confirmPurchaseButton = new JButton("Confirm Add");
+                                                confirmPurchaseButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                                confirmPurchaseButton.setBounds(150, 230, 200, 30);
+
+                                                confirmPurchaseButton.addActionListener(new ActionListener() {
+                                                    @Override
+                                                    public void actionPerformed(ActionEvent e) {
+                                                        // Implement logic to confirm purchase and store data in the database
+                                                        String fullName = fNameField.getText();
+                                                        String phoneNumber = phoneField.getText();
+                                                        String productName = productField.getText();
+                                                        int quantity = Integer.parseInt(quantityField.getText());
+                                                        double price = Double.parseDouble(priceField.getText());
+
+                                                        // Assuming you have a 'purchases' table in your database
+                                                        try {
+                                                            String url = "jdbc:mysql://localhost:3306/news";
+                                                            String db_username = "root";
+                                                            String db_password = "9943";
+                                                            Connection connection = DriverManager.getConnection(url, db_username, db_password);
+
+                                                            String insertPurchaseSQL = "INSERT INTO product (f_name, phone, product, quantity, price) VALUES (?, ?, ?, ?, ?)";
+                                                            PreparedStatement insertPurchaseStatement = connection.prepareStatement(insertPurchaseSQL);
+                                                            insertPurchaseStatement.setString(1, fullName);
+                                                            insertPurchaseStatement.setString(2, phoneNumber);
+                                                            insertPurchaseStatement.setString(3, productName);
+                                                            insertPurchaseStatement.setInt(4, quantity);
+                                                            insertPurchaseStatement.setDouble(5, price);
+                                                            //insertPurchaseStatement.setString(6, username);  // Assuming 'username' is the farmer's username
+                                                            insertPurchaseStatement.executeUpdate();
+
+                                                            insertPurchaseStatement.close();
+                                                            connection.close();
+
+                                                            JOptionPane.showMessageDialog(null, "Product Added  successfully!");
+                                                            purchaseFrame.dispose();  // Close the purchase frame after confirming purchase
+                                                        } catch (SQLException ex) {
+                                                            ex.printStackTrace();
+                                                            JOptionPane.showMessageDialog(null, "Failed to Add product. Please try again.");
+                                                        }
+                                                    }
+                                                });
+
+        purchaseFrame.setLayout(null);
+        purchaseFrame.add(fNameLabel);
+        purchaseFrame.add(fNameField);
+        purchaseFrame.add(phoneLabel);
+        purchaseFrame.add(phoneField);
+        purchaseFrame.add(productLabel);
+        purchaseFrame.add(productField);
+        purchaseFrame.add(quantityLabel);
+        purchaseFrame.add(quantityField);
+        purchaseFrame.add(priceLabel);
+        purchaseFrame.add(priceField);
+        purchaseFrame.add(confirmPurchaseButton);
+
+        purchaseFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        purchaseFrame.setVisible(true);
+    }
+});
+
+                                            // purchase.addActionListener(new ActionListener() {
+                                            //     public void actionPerformed(ActionEvent e)
+                                            //     {
+                                            //         JFrame framep=new JFrame("Normal user");
+                                            //         framep.setBounds(200, 200, 300, 150);
+                                            //         JLabel labelp=new JLabel("Enter the product to add !!! ");
+                                            //         labelp.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                            //         labelp.setHorizontalAlignment(SwingConstants.CENTER);
+                                            //         framep.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                            //         framep.add(labelp);
+                                            //         framep.setVisible(true);
+                                            //         System.out.println("Hello");
+                                            //     }
+                                            // });
+
+                                        }
+                                        else if(x.equals("Organization"))
+                                        {
+                                            JFrame frame3 = new JFrame("Company");
+                                            frame3.setBounds(200, 200, 500, 300);
+                                            
+                                            // Panel to hold search components
+                                            JPanel panel3 = new JPanel();
+                                            panel3.setLayout(null);
+                                            
+                                            // Text field for entering the product name
+                                            JTextField searchField = new JTextField();
+                                            searchField.setBounds(50, 20, 200, 30);
+                                            
+                                            // Button to trigger the search
+                                            JButton searchButton = new JButton("Search");
+                                            searchButton.setBounds(260, 20, 100, 30);
+                                            
+                                            frame3.setVisible(true);
+                                            frame3.add(panel3);
+                                            panel3.add(searchField);
+                                            panel3.add(searchButton);
+                                            
+                                            
+                                            searchButton.addActionListener(new ActionListener() {
+                                                public void actionPerformed(ActionEvent e)
+                                                {
+                                                    try{
+                                                        String urlO = "jdbc:mysql://localhost:3306/news";
+                                                            String db_usernameO = "root";
+                                                            String db_passwordO = "9943";
+                                                            Connection connectionO = DriverManager.getConnection(urlO, db_usernameO, db_passwordO);
+                                                            java.sql.Statement stmtn = connectionO.createStatement();
+                                                            ResultSet rsO = stmtn.executeQuery("select * from product");
+
+                                                    
+
+                                                // Your logic to process the ResultSet goes here
+                                                while (rsO.next()) {
+                                                    
+                                                    // Retrieve data from the ResultSet
+                                                    String productName = rsO.getString(4);
+                                                    // int quantity = rsO.getInt(5);
+                                                    // double price = rsO.getDouble(6);
+                                                    // String phoneNumber = rsO.getString(3);
+                                                    // String name = rsO.getString(2);
+                                                    String searchInput=searchField.getText();
+
+                                                    if(productName.equals(searchInput))
+                                                    {
+                                                        JFrame frameO = new JFrame("Organization-2");
+                                                        frameO.setBounds(200, 200, 500, 300);
+
+                                                        DefaultTableModel tableModel = new DefaultTableModel();
+                                                        JTable table = new JTable(tableModel);
+                                                        tableModel.addColumn("Product Name");
+                                                        tableModel.addColumn("Quantity");
+                                                        tableModel.addColumn("Price");
+                                                        tableModel.addColumn("Phone Number");
+                                                        tableModel.addColumn("Name");
+                                                        String urlO2 = "jdbc:mysql://localhost:3306/news";
+                                                        String db_usernameO2 = "root";
+                                                        String db_passwordO2 = "9943";
+                                                        try (Connection connectionO2 = DriverManager.getConnection(urlO2, db_usernameO2, db_passwordO2);
+                                                        java.sql.Statement stmtO2 = connectionO.createStatement();
+                                                        ResultSet rsO2 = stmtO2.executeQuery("SELECT * FROM product")) {
+
+                                                        while (rsO2.next()) {
+                                                            // Retrieve data from the ResultSet
+                                                            String productNameO = rsO2.getString(4);
+                                                            int quantityO = rsO2.getInt(5);
+                                                            double priceO = rsO2.getDouble(6);
+                                                            String phoneNumberO = rsO2.getString(3);
+                                                            String nameO = rsO2.getString(2);
+
+                                                            // Add a row to the table model
+                                                            tableModel.addRow(new Object[]{productNameO, quantityO, priceO, phoneNumberO, nameO});
+                                                        }}
+                                                     catch (SQLException ex) {
+                                                        ex.printStackTrace();
+                                                    }
+                                                    JButton purchaseButton = new JButton("Purchase");
+                                                    frameO.getContentPane().add(purchaseButton, BorderLayout.SOUTH);
+
+                                                    purchaseButton.addActionListener(new ActionListener() {
+                                                        @Override
+                                                        public void actionPerformed(ActionEvent e) {
+                                                            // Add your purchase logic here
+                                                            
+                                                            // Create a new frame for entering organization details
+                                                            JFrame purchaseFrame = new JFrame("Purchase Details");
+                                                            purchaseFrame.setBounds(300, 300, 400, 200);
+                                                            
+                                                            // Create labels
+                                                            JLabel nameLabel = new JLabel("Organization Name:");
+                                                            JLabel contactLabel = new JLabel("Contact Number:");
+                                                            JLabel needLabel = new JLabel("Need:");
+                                                        
+                                                            // Create text fields
+                                                            JTextField nameField = new JTextField();
+                                                            JTextField contactField = new JTextField();
+                                                            JTextField needField = new JTextField();
+                                                        
+                                                            // Create a panel for organizing components
+                                                            JPanel panel = new JPanel(new GridLayout(3, 2));
+                                                        
+                                                            // Add components to the panel
+                                                            panel.add(nameLabel);
+                                                            panel.add(nameField);
+                                                            panel.add(contactLabel);
+                                                            panel.add(contactField);
+                                                            panel.add(needLabel);
+                                                            panel.add(needField);
+                                                        
+                                                            // Add the panel to the frame
+                                                            purchaseFrame.getContentPane().add(panel, BorderLayout.CENTER);
+                                                        
+                                                            // Add a confirm button
+                                                            JButton confirmButton = new JButton("Confirm Purchase");
+                                                            confirmButton.addActionListener(new ActionListener() {
+                                                                @Override
+                                                                public void actionPerformed(ActionEvent e) {
+                                                                    // Retrieve values from text fields
+                                                                    String organizationName = nameField.getText();
+                                                                    String contactNumber = contactField.getText();
+                                                                    String need = needField.getText();
+                                                        
+                                                                    // Add your logic to handle the purchase details
+                                                                    // You can use these values in your database operations or other processing
+                                                        
+                                                                    // Display a confirmation message
+                                                                    JOptionPane.showMessageDialog(purchaseFrame, "Purchase confirmed for: \n" +
+                                                                            "Organization Name: " + organizationName + "\n" +
+                                                                            "Contact Number: " + contactNumber + "\n" +
+                                                                            "Need: " + need);
+                                                                    
+                                                                    // Close the purchase frame
+                                                                    purchaseFrame.dispose();
+                                                                }
+                                                            });
+                                                        
+                                                            // Add the confirm button to the frame
+                                                            purchaseFrame.getContentPane().add(confirmButton, BorderLayout.SOUTH);
+                                                        
+                                                            // Set the frame to be visible
+                                                            purchaseFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                                            purchaseFrame.setVisible(true);
+                                                        }
+                                                        
+                                                    });
+                                                    JScrollPane scrollPane = new JScrollPane(table);
+                                                    frameO.getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+                                                    frameO.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                                    frameO.setVisible(true);
+                                                    //     JFrame frameO=new JFrame("Organization-2");
+
+                                                        
+                                                        
+                                                    //     System.out.println("Product: " + productName + ", Quantity: " + quantity + ", Price: " + price +
+                                                    // ", Phone Number: " + phoneNumber + ", Name: " + name);
+                                                    }
+                                                    else
+                                                    {
+
+                                                        System.out.println("Product not found");
+                                                    }
+
+                                                    // Add your logic to process the data, such as displaying in a table or other UI components
+                                                   
+                                                }
+
+                                            } 
+                                            catch (SQLException ex) 
+                                            {
+                                                ex.printStackTrace();
+                                            }
+
+                                                }
+                                            });
+
+
+                                            
+
+    
+                                            // JFrame frame3=new JFrame("Company");
+                                            // //JTable table1=new JTable(3,3);
+                                            // frame3.setBounds(200, 200, 300, 150);
+                                            // //JLabel label=new JLabel("Available products are !!! ");
+                                            // JLabel label1=new JLabel("Want product !!");
+                                            // label1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                                            // label1.setHorizontalAlignment(SwingConstants.CENTER);
+                                            // frame3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                            // //frame1.add(label);
+                                            // //frame1.add(table1);
+                                            // //frame1.add(label1);
+                                            // frame3.setVisible(true);
+                                            // //System.out.println("Normal user");
+
+                                            // System.out.println("Company");
+                                        }
+                                        
+                                    }
+                                    
+
+                                }
+                                if(flag==0)
+                                {
+                                    JOptionPane.showConfirmDialog(null, "Invalid username or password! Please try again!!", "User SignIn", JOptionPane.OK_CANCEL_OPTION);
+           
+                                }
+                                
+                                
+                            }
+
+                        catch(Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        
+
+       
+
+
+
+
+                    
+                //     try {
+                //         //Class.forName("com.mysql.cj.jdbc.Driver");
+                //             String url = "jdbc:mysql://localhost:3306/news";
+                //             String db_username = "root";
+                //             String db_password = "9943";
+                //             Connection connection = DriverManager.getConnection(url, db_username, db_password);
+                //             System.out.println("connected");
+                //             String sql = "CREATE TABLE IF NOT EXISTS users (" +
+                //                         "id INT AUTO_INCREMENT PRIMARY KEY," +
+                //                         "username VARCHAR(255) NOT NULL," +
+                //                         "password VARCHAR(255) NOT NULL," +
+                //                         "user_type VARCHAR(80) NOT NULL" +
+                //                         ")";
+
+                //             PreparedStatement statement = connection.prepareStatement(sql);
+                //             statement.execute();
+
+
+                //         }
+                //     catch(SQLException ex)
+                //     {
+                //         ex.printStackTrace();
+                //     }
+
+                    /*if (username and pass word are correct)
+                     * { take the user type and check for farmer,normal user,company
+                     * 
+                     * if (normal user){List all the produts available}// //
+                     * else if (Company )
+                     * {Choose product and make payment}
+                     * else(add product)
+                     * }
+                     * }
+                     */
+                
+                    System.out.println("Login - Username: " + username + ", Password: " + password);
+                    // Add your login logic here
+                } else if (selectedAction.equals("Register")) {
+                    String name = nameField.getText();
+                    String phoneNumber = phoneNumberField.getText();
+                    String email = emailField.getText();
+                    String userType = (String) userTypeComboBox.getSelectedItem();
+                    try {
+                        //Class.forName("com.mysql.cj.jdbc.Driver");
+                            String url = "jdbc:mysql://localhost:3306/news";
+                            String db_username = "root";
+                            String db_password = "9943";
+                            int temp=0;
+                            Connection connection = DriverManager.getConnection(url, db_username, db_password);
+                            java.sql.Statement stmt1 = connection.createStatement();
+                            ResultSet rs1 = stmt1.executeQuery("select * from userinformation");
+                            System.out.println("connected");
+                            while(rs1.next())
+                            {
+                                if(rs1.getString(2).equals(username))
+                                {
+                                    temp=1;
+                                    break;
+                                }
+                                else{
+                                    temp=0;
+                                    continue;
+                                }
+                            }
+                            if(temp==0)
+                            {
+                                String sql = "INSERT INTO UserInformation (Username, Password, Name, PhoneNumber, Email, UserType) VALUES (?, ?, ?, ?, ?, ?)";
+                                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                                preparedStatement.setString(1, username);
+                                preparedStatement.setString(2,password);
+                                preparedStatement.setString(3, name);
+                                preparedStatement.setString(4,phoneNumber );
+                                preparedStatement.setString(5, email);
+                                preparedStatement.setString(6, userType);
+
+
+                                preparedStatement.executeUpdate();
+
+                                preparedStatement.close();
+                                connection.close();
+
+                            }
+                            else
+                            {
+
+                                JOptionPane.showConfirmDialog(null, "Username already exist !! Please try again with another name ", "User SignIn", JOptionPane.OK_CANCEL_OPTION);
+                            
+
+                            }
+
+                        
+                    } catch (SQLException ex) 
+                    {
+                        ex.printStackTrace();
+                    }
+                    // if(userType.equals("Normal User"))
+                    // {
+                    //     JFrame thankYouFrame = new JFrame("Thank You !");
+                    //     thankYouFrame.setBounds(200, 200, 300, 150);
+
+
+                    //     JLabel thankYouLabel = new JLabel("Thank You for Logging In by normal user!");
+                    //     thankYouLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                    //     thankYouLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    //     thankYouFrame.getContentPane().setLayout(new BorderLayout());
+                    //     thankYouFrame.getContentPane().add(thankYouLabel, BorderLayout.CENTER);
+
+                    //     thankYouFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    //     thankYouFrame.setVisible(true); 
+
+                    // }
+                    // else if(userType.equals("Farmer"))
+                    // {
+                    //     JFrame thankYouFrame2 = new JFrame("Thank You !");
+                    //     thankYouFrame2.setBounds(200, 200, 300, 150);
+
+
+                    //     JLabel thankYouLabe2 = new JLabel("Thank You for Logging In by normal Farmer!");
+                    //     thankYouLabe2.setFont(new Font("Tahoma", Font.PLAIN, 18));
+                    //     thankYouLabe2.setHorizontalAlignment(SwingConstants.CENTER);
+                    //     thankYouFrame2.getContentPane().setLayout(new BorderLayout());
+                    //     thankYouFrame2.getContentPane().add(thankYouLabe2, BorderLayout.CENTER);
+
+                    //     thankYouFrame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    //     thankYouFrame2.setVisible(true);
+                    // }
+                    
+
+                    System.out.println("Register - Username: " + username + ", Name: " + name +
+                            ", Phone Number: " + phoneNumber + ", Email: " + email +
+                            ", Password: " + password + ", User Type: " + userType);
+                    // Add your registration logic here
+                }
+            }
+        });
+
+        return actionButton;
+    }
+}
